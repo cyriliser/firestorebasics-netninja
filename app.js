@@ -32,6 +32,9 @@ const rendercafe = doc => {
 
 // getting data
 db.collection("cafes")
+  // .where("city", "==", "manchaster")  //querying/filtering database
+  // .where("city", "<", "g") //querying/filtering database
+  .orderBy("city") //ordering the data
   .get()
   .then(snapshot => {
     // console.log(snapshot.docs);
