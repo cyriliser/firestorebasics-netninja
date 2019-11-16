@@ -31,18 +31,37 @@ const rendercafe = doc => {
 };
 
 // getting data
-db.collection("cafes")
-  // .where("city", "==", "manchaster")  //querying/filtering database
-  // .where("city", "<", "g") //querying/filtering database
-  .orderBy("city") //ordering the data
-  .get()
-  .then(snapshot => {
-    // console.log(snapshot.docs);
+// db.collection("cafes")
+//   // .where("city", "==", "manchaster")  //querying/filtering database
+//   // .where("city", "<", "g") //querying/filtering database
+//   .orderBy("city") //ordering the data
+//   .get()
+//   .then(snapshot => {
+//     // console.log(snapshot.docs);
 
-    snapshot.forEach(doc => {
-      // console.log(`Object id: ${doc.id}`);
-      // console.log(doc.data());
-      rendercafe(doc);
+//     snapshot.forEach(doc => {
+//       // console.log(`Object id: ${doc.id}`);
+//       // console.log(doc.data());
+//       rendercafe(doc);
+//     });
+//   });
+
+// real time lister
+db.collection("cafes")
+  .orderBy("city")
+  .onSnapshot(snapshot => {
+    let changes = snapshot.docChanges();
+    // console.log(changes);
+
+    changes.forEach(change => {
+      // console.log(change.doc.data());
+      if (change.type == "added") {
+        rendercafe(change.doc);
+      } else if (change.type == "removed") {
+        // let li = cafelist.querySelector("[data-id='" + change.doc.id + "']");
+        let li = cafelist.querySelector(`[data-id= ${change.doc.id}]`);
+        cafelist.removeChild(li);
+      }
     });
   });
 
