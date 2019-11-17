@@ -1,7 +1,7 @@
 const cafelist = document.querySelector("#cafe-list");
 const form = document.querySelector("#add-cafe-form");
 
-// create element and render cafe
+// create element and render cafe  //has update and delete data
 const rendercafe = doc => {
   let li = document.createElement("li");
   let name = document.createElement("span");
@@ -27,6 +27,11 @@ const rendercafe = doc => {
     db.collection("cafes")
       .doc(id)
       .delete();
+
+    // updating the cafe
+    //   db.collection("cafes")
+    //     .doc(id)
+    //     .update({ city: "scottsville" });
   });
 };
 
@@ -55,12 +60,18 @@ db.collection("cafes")
 
     changes.forEach(change => {
       // console.log(change.doc.data());
+      // console.log(change);
       if (change.type == "added") {
         rendercafe(change.doc);
       } else if (change.type == "removed") {
         // let li = cafelist.querySelector("[data-id='" + change.doc.id + "']");
         let li = cafelist.querySelector(`[data-id= ${change.doc.id}]`);
         cafelist.removeChild(li);
+      } else if (change.type == "modified") {
+        // let li = cafelist.querySelector("[data-id='" + change.doc.id + "']");
+        let li = cafelist.querySelector(`[data-id= '${change.doc.id}']`);
+        li.children[0].textContent = change.doc.data().name;
+        li.children[1].textContent = change.doc.data().city;
       }
     });
   });
